@@ -86,7 +86,7 @@ if(isset($_SESSION['auth']) && $_SESSION['auth'] == false){
 							<td><input class="button" type="button" value="±" onclick="znak()"></td>
 							<td><input class="button" type="button" value="0" onclick="input(0)"></td>
 							<td><input class="button" type="button" value="." onclick="input('.')"></td>
-							<td><form name="form" action="api.php" и method="get">
+							<td><form name="form" action="api.php" method="get">
 									<input class="textview" name="textview" id="test">
 									<button type="sumbit">=</button>
 								</form>

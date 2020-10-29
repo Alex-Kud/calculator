@@ -42,18 +42,16 @@ if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 
 
 if($_GET['textview']){
-	echo $_GET['textview'];
-	/*$pr = json_decode($_GET['textview']);
+	//echo $_GET['textview'];
+	$pr = json_decode($_GET['textview']);
 	$row = eval ($pr);
-	echo json_encode($row);	*/
+	echo json_encode($row);	
 }
 
 switch ($api->module){
 	//-----Кейс для авторизации-----
     case 'auth':
         $data = $api->params(['login', 'password']);
-		//-----Создаём массив для сбора ошибок-----
-		$errors = array();
 		//-----Если логин и пароль верны, -----
 		$row = $db->row("SELECT * FROM users WHERE login = ?s AND password =?s", [$data['login'], $data['password']]);
 		if ($row){
@@ -62,13 +60,9 @@ switch ($api->module){
 			//-----Редирект на главную страницу-----
 			header('Location: calc.php');
 		} else {
-			$errors[] = 'Пароль неверно введен!';
+			echo 'Пароль неверно введен!';
 		}
-		//-----Выводим ошибки, стирая их из массива-----
-		if(!empty($errors)){
-			echo array_shift($errors);
-		}
-        break;
+	break;
 	//-----Кейс для регистрации-----
     case 'reg':
         $data = $api->params(['login_reg', 'password_reg', 'password_reg_2']);
