@@ -38,7 +38,7 @@ $db = new DB("$db_type:host=$ip;dbname=$db_name", $login, $pass,
 
 session_start();
 //Пользователь авторизован, редиректим в калькулятор
-if($_SESSION['auth'] == true){
+if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 	header('Location: calc.php');
 }
 
@@ -62,7 +62,7 @@ if($_SESSION['auth'] == true){
 		<form class="auth" action="api.php" method="get">
 		   <p><input type="text" name="login" placeholder="Логин"></p>
 		   <p><input type="password" name="password" placeholder="Пароль"></p>
-		   <button class="btn btn-success" name="auth" type="submit">Авторизоваться</button>
+		   <button class="btn btn-success" name="module" value="auth" type="submit">Авторизоваться</button>
 		</form>
 		<br>
 		<br>
@@ -70,7 +70,7 @@ if($_SESSION['auth'] == true){
 		   <p><input type="text" name="login_reg" placeholder="Логин"></p>
 		   <p><input type="password" name="password_reg" placeholder="Пароль"></p>
 		   <p><input type="password" name="password_reg_2" placeholder="Повторите пароль"></p>   
-		   <button class="btn btn-success" name="reg" type="submit">Регистрация</button>
+		   <button class="btn btn-success" name="module" value="reg" type="submit">Регистрация</button>
 		</form>
 	</body>
 </html>

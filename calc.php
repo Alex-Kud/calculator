@@ -26,7 +26,7 @@ $db = new DB("$db_type:host=$ip;dbname=$db_name", $login, $pass,
 
 session_start();
 
-if(_SESSION['auth'] == false){
+if(isset($_SESSION['auth']) && $_SESSION['auth'] == false){
 	header('Location: index.php');
 }
 ?>
@@ -45,15 +45,15 @@ if(_SESSION['auth'] == false){
 		<div class="logout">
 			<p>Вы вошли под ником: <?php echo $_SESSION['login']?></p>
 			<form action="api.php" method="get">
-				<button class="btn btn-success" name="logout" type="submit">Выйти</button>
+				<button class="btn btn-success" name="module" value="logout" type="submit">Выйти</button>
 			</form>
 		</div>
 
 		<div class="calculator"> 
 		
-			<form name="form">
+			<!--<form name="form">
 				<input class="textview" name="textview" id="test">
-			</form>
+			</form>-->
 			
 			<div class="cont-buttons"> </div>
 				<table class="table table-bordered">
@@ -86,7 +86,13 @@ if(_SESSION['auth'] == false){
 							<td><input class="button" type="button" value="±" onclick="znak()"></td>
 							<td><input class="button" type="button" value="0" onclick="input(0)"></td>
 							<td><input class="button" type="button" value="." onclick="input('.')"></td>
-							<td><input class="button" type="button" value="=" onclick="result()"></td>
+							<td><form name="form" action="api.php" и method="get">
+									<input class="textview" name="textview" id="test">
+									<button type="sumbit">=</button>
+								</form>
+							
+							<!--<input class="button" type="button" value="=" onclick="result()">-->
+							</td>
 						</tr>
 					</tbody>
 				</table>

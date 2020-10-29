@@ -30,52 +30,40 @@ session_start();
 //-----Новый объект api класса SimpleAPI-----
 $api = new SimpleAPI();
 //-----Пользователь авторизован, редиректим в калькулятор-----
-if($_SESSION['auth'] == true){
+if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 	header('Location: calc.php');
 }
-//-----При клике клавиши Авторизоваться обращение к свойству module и присваивание ему значения auth. $_GET['auth'] приходит из index.php-----
-if(isset( $_GET['auth'])){
-    $api->module = 'auth';
-}
-//-----При клике клавиши Регистрации обращение к свойству module и присваивание ему значения reg. $_GET['reg'] приходит из index.php-----
-if(isset( $_GET['reg'])){
-    $api->module = 'reg';
-}
-//-----При клике клавиши Выйти обращение к свойству module и присваивание ему значения logout. $_GET['logout'] приходит из calc.php-----
-if(isset( $_GET['logout'])){
-    $api->module = 'logout';
-}
 //Попытка работы с функцией rezult из script.js
-if($_POST['param']) {
+/*if($_POST['param']) {
  $param = json_decode($_POST['param']);
  $row = eval ($param);
  echo json_encode($row);
- exit();
+}*/
+
+
+if($_GET['textview']){
+	echo $_GET['textview'];
+	/*$pr = json_decode($_GET['textview']);
+	$row = eval ($pr);
+	echo json_encode($row);	*/
 }
 
 switch ($api->module){
 	//-----Кейс для авторизации-----
     case 'auth':
         $data = $api->params(['login', 'password']);
-		$api->answer['authorize'] = ($data['login'] == 'admin' && $data['password'] == 'admin'); //это для проверки работоспособности
 		//-----Создаём массив для сбора ошибок-----
 		$errors = array();
-		$lgn = $_GET['login'];
-		//-----Проводим поиск пользователей в таблице users-----
-		$user = $db->query('SELECT * FROM `users` WHERE `login` = ?s', ['$lgn']); 
-		$array = json_encode($user, true); 
-		//-----Если логин существует, тогда проверяем пароль-----
-		if(isset($array)){
-			if($_GET['password'] == $array->password){
-				//-----Все верно, пускаем пользователя-----
-				$_SESSION['auth'] = true;
-				$_SESSION['login'] = $_GET['login'];
-				//-----Редирект на главную страницу-----
-				header('Location: calc.php');
-				//-----Пароль неверен - выдаём ощибку-----
-			}else {$errors[] = 'Пароль неверно введен!';}
-		//-----Если такого пользователя нет в БД - выдаём ошибку-----
-		}else {$errors[] = 'Пользователь с таким логином не найден!';}
+		//-----Если логин и пароль верны, -----
+		$row = $db->row("SELECT * FROM users WHERE login = ?s AND password =?s", [$data['login'], $data['password']]);
+		if ($row){
+			$_SESSION['auth'] = true;
+			$_SESSION['login'] = $data['login'];
+			//-----Редирект на главную страницу-----
+			header('Location: calc.php');
+		} else {
+			$errors[] = 'Пароль неверно введен!';
+		}
 		//-----Выводим ошибки, стирая их из массива-----
 		if(!empty($errors)){
 			echo array_shift($errors);
@@ -84,41 +72,31 @@ switch ($api->module){
 	//-----Кейс для регистрации-----
     case 'reg':
         $data = $api->params(['login_reg', 'password_reg', 'password_reg_2']);
-		$api->answer['authoreg'] = ($data['login_reg'] == 'admin' && $data['password_reg'] == 'admin' && $data['password_reg'] == $data['password_reg_2']); //это для проверки работоспособности
 			//-----Создаем массив для сбора ошибок-----
 			$errors = array();
 			//-----Проводим проверки-----
-			if(trim($_GET['login_reg']) == ''){
+			if(trim($data['login_reg']) == ''){
 				$errors[] = "Введите логин!";
 			}
-			if($_GET['password_reg'] == ''){
+			if($data['password_reg'] == ''){
 				$errors[] = "Введите пароль";
 			}
-			if($_GET['password_reg_2'] == ''){
+			if($data['password_reg_2'] == ''){
 				$errors[] = "Введите повторный пароль";
 			}			
-			if($_GET['password_reg_2'] != $_GET['password_reg']){
+			if($data['password_reg_2'] != $data['password_reg']){
 				$errors[] = "Повторный пароль введен не верно!";
 			}
-			//функция mb_strlen - получает длину строки
-			if(mb_strlen($_GET['login_reg']) < 5 || mb_strlen($_GET['login_reg']) > 90){
-				$errors[] = "Недопустимая длина логина";
-			}
-			if(mb_strlen($_GET['password_reg']) < 2 || mb_strlen($_GET['password_reg']) > 8){
-				$errors[] = "Недопустимая длина пароля (от 2 до 8 символов)";
-			}
 			//-----Проверка на уникальность логина-----
-			$database = $db->query('SELECT * FROM `users` WHERE `login` = ?s', [$_GET['login_reg']]);
-			$my_array = json_encode($database, true); 
+			$query = $db->query('SELECT * FROM `users` WHERE `login` = ?s', [$data['login_reg']]);
+			$my_array = json_encode($query, true); 
 			echo $my_array;
-			if($my_array->login != ' '){ 
+			if($my_array['login'] != ' '){ 
 				$errors[] = "Пользователь с таким логином существует!";
 			}
 			//-----Если ошбок нет, то заполняем БД и говорим, что всё ОК-----
-			$lg = $_GET['login_reg'];
-			$rg = $_GET['password_reg'];
 			if(empty($errors)) {
-				$db->query('INSERT INTO users (login, password) VALUES (?as)', ['$lg', '$rg']);
+				$db->query('INSERT INTO users (login, password) VALUES (?as)', [$data['login_reg'], $data['password_reg']]);
 				echo 'Вы успешно зарегистрированы! Можно авторизоваться';
 			//-----Если есть ошибки, выводим их-----	
 			} else {
@@ -128,10 +106,8 @@ switch ($api->module){
         break;
 	//-----Кейс для выхода-----		
     case 'logout':
-	    $data = $api->params(['?login', '?password']);
-		//-----Производим выход пользователя-----
-		unset($_SESSION['auth']);
-		unset($_SESSION['login']);
+		//-----Завершение сессии-----
+		session_destroy();
 		//-----Редирект на главную страницу-----
 		header('Location: index.php');
 }
