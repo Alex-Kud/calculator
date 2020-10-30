@@ -39,19 +39,16 @@ function input(chislo){
 function result(){
 	s++;
 	var res = document.form.textview.value;
-	   $.ajax({
+			$.ajax({
             type: "POST",
             url: "api.php",
             dataType: "json",
             data: "param="+JSON.stringify(res),
-			success: function(html) {
-				alert (html);
+			success: function(res) {
+				alert (res);
 			}
-		})
-			 
+		})	 
 	//if(res) document.form.textview.value = eval(res);
-	
-	
 }
 
 function clean(){

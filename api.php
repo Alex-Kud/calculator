@@ -27,40 +27,32 @@ $db = new DB("mysql:host=localhost;dbname=$db_name", $login, $pass,
 );
 //-----Запуск сессии-----
 session_start();
-//-----Новый объект api класса SimpleAPI-----
 $api = new SimpleAPI();
 //-----Пользователь авторизован, редиректим в калькулятор-----
 if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 	header('Location: calc.php');
 }
+
 //Попытка работы с функцией rezult из script.js
-/*if($_POST['param']) {
+if(isset($_POST['param'])) {
  $param = json_decode($_POST['param']);
  $row = eval ($param);
- echo json_encode($row);
-}*/
-
-
-if($_GET['textview']){
-	//echo $_GET['textview'];
-	$pr = json_decode($_GET['textview']);
-	$row = eval ($pr);
-	echo json_encode($row);	
+ $json = json_encode($row);
 }
 
 switch ($api->module){
 	//-----Кейс для авторизации-----
     case 'auth':
         $data = $api->params(['login', 'password']);
-		//-----Если логин и пароль верны, -----
+		//-----Если логин и пароль верны, пускаем в калькулятор-----
 		$row = $db->row("SELECT * FROM users WHERE login = ?s AND password =?s", [$data['login'], $data['password']]);
 		if ($row){
 			$_SESSION['auth'] = true;
 			$_SESSION['login'] = $data['login'];
-			//-----Редирект на главную страницу-----
 			header('Location: calc.php');
 		} else {
 			echo 'Пароль неверно введен!';
+			echo "<a href=\"index.php\">Повторите попытку</a>"; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
 		}
 	break;
 	//-----Кейс для регистрации-----
@@ -82,26 +74,24 @@ switch ($api->module){
 				$errors[] = "Повторный пароль введен не верно!";
 			}
 			//-----Проверка на уникальность логина-----
-			$query = $db->query('SELECT * FROM `users` WHERE `login` = ?s', [$data['login_reg']]);
-			$my_array = json_encode($query, true); 
-			echo $my_array;
-			if($my_array['login'] != ' '){ 
+			$row_reg = $db->row("SELECT * FROM users WHERE login = ?s", [$data['login_reg']]);
+			if($row_reg){ 
 				$errors[] = "Пользователь с таким логином существует!";
 			}
-			//-----Если ошбок нет, то заполняем БД и говорим, что всё ОК-----
+			//-----Если ошбок нет, то заполняем БД и редиректим в калькулятор-----
 			if(empty($errors)) {
-				$db->query('INSERT INTO users (login, password) VALUES (?as)', [$data['login_reg'], $data['password_reg']]);
-				echo 'Вы успешно зарегистрированы! Можно авторизоваться';
+				$db->query("INSERT INTO users (login, password) VALUES (?s, ?s)", [$data['login_reg'], $data['password_reg']]);
+				$_SESSION['auth'] = true;
+				$_SESSION['login'] = $data['login_reg'];
+				header('Location: calc.php');	
 			//-----Если есть ошибки, выводим их-----	
 			} else {
-				// array_shift() извлекает первое значение массива array и возвращает его, сокращая размер array на один элемент. 
 				echo array_shift($errors);
 			}
         break;
 	//-----Кейс для выхода-----		
     case 'logout':
-		//-----Завершение сессии-----
 		session_destroy();
-		//-----Редирект на главную страницу-----
 		header('Location: index.php');
 }
+?>
