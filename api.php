@@ -13,37 +13,39 @@ header('Access-Control-Expose-Headers: Access-Control-Allow-Origin', false);
 header('Access-Control-Allow-Origin: *', false);
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept', false);
 header('Access-Control-Allow-Credentials: true');
+header("Content-Type: application/json");
+
 //-----Подключение к БД-----
 $db_type = 'mysql';
 $db_name = 'learner8';
 $login = 'learner8';
 $pass = '3vlMv4S7TFn9fazGcjAS';
 $ip = 'localhost';
+
 //-----Создание экземпляра к БД------
 $db = new DB("mysql:host=localhost;dbname=$db_name", $login, $pass,
     [PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 );
+
 //-----Запуск сессии-----
 session_start();
 $api = new SimpleAPI();
+
 //-----Пользователь авторизован, редиректим в калькулятор-----
 if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
-	header('Location: calc.php');
-}
-
-//Попытка работы с функцией rezult из script.js
-if(isset($_GET['param'])) {
- $param = json_decode($_POST['param']);
- $row = eval ($param);
- echo json_encode($row);
+	if(!isset($_GET)){
+		header('Location: calc.php');
+	}
 }
 
 switch ($api->module){
+	
 	//-----Кейс для авторизации-----
     case 'auth':
         $data = $api->params(['login', 'password']);
+		//console_log($nedata);
 		//-----Если логин и пароль верны, пускаем в калькулятор-----
 		$row = $db->row("SELECT * FROM users WHERE login = ?s AND password =?s", [$data['login'], $data['password']]);
 		if ($row){
@@ -55,6 +57,7 @@ switch ($api->module){
 			$api->answer["<a href=\"index.php\">Повторите попытку</a>"] = true; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
 		}
 	break;
+	
 	//-----Кейс для регистрации-----
     case 'reg':
         $data = $api->params(['login_reg', 'password_reg', 'password_reg_2']);
@@ -76,10 +79,22 @@ switch ($api->module){
 				$_SESSION['login'] = $data['login_reg'];
 				header('Location: calc.php');	
 			}
-        break;
+    break;
+	
 	//-----Кейс для выхода-----		
     case 'logout':
 		session_destroy();
 		header('Location: index.php');
+	break;
+	
+	//-----Кейс для счёта-----
+    case 'count':
+		$data = $api->params(['rezult']);
+		$dt = $data['rezult']; 
+		$dt = str_replace ("!", "+", $dt);
+		eval("\$dt = $dt ;");
+		$api->answer[json_encode($dt)] = true;
+		//echo json_encode($dt);
+	break;	
 }
 ?>

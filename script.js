@@ -36,33 +36,37 @@ function input(chislo){
 		document.form.textview.value = document.form.textview.value+chislo;
 }
 
+function sendJSON() { 
+	let xhr = new XMLHttpRequest(); 
+	var send_string = document.form.textview.value;
+	send_string = send_string.replace(/([+])/g, '$1 !');
+	// -----адрес, куда мы отправим нашу JSON-строку-----
+	  let url = "https://l8.scripthub.ru/api.php?module=count&rezult=" + send_string; 
+	// -----открываем соединение-----
+	console.log (document.form.textview.value);
+	console.log (send_string);
+	xhr.open("GET", url, true); 
+	xhr.setRequestHeader("Content-Type", "application/json"); 
+	//-----обработка обращения к серверу-----
+	xhr.onreadystatechange = function () { 
+	//-----если запрос принят и сервер ответил, что всё в порядке-----
+			if (xhr.readyState === 4 && xhr.status === 200) { 
+				send_string = this.responseText;
+				send_string = send_string.replace('{"','');
+				send_string = send_string.replace('":true}','');
+				document.form.textview.value = send_string;
+		}	
+	}; 
+	xhr.send(); 
+} 
+
 function result(){
 	s++;
-	var res = document.form.textview.value;
-			$.ajax({
-            type: "GET",
-            url: '/api.php',
-			cahe: false,
-            dataType: "json",
-            data: 'param='+JSON.stringify(res),
-			/*success: function(data) {
-				document.form.textview.value = data;
-			}*/
-			success:function(data){
-				console.log(data);
-			},
-			error:function(data){
-				console.log('error');
-				console.log(data);
-			}
-		})	 
-	//if(res) document.form.textview.value = eval(res);
+	sendJSON();
 }
 
 function clean(){
 	document.form.textview.value="";
-	//s = 0;
-	//s2 = 0;
 }
 
 function back(){

@@ -39,9 +39,10 @@ $db = new DB("$db_type:host=$ip;dbname=$db_name", $login, $pass,
 session_start();
 //Пользователь авторизован, редиректим в калькулятор
 if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
-	header('Location: calc.php');
+	if(!isset($_GET)){
+		header('Location: calc.php');
+	}
 }
-
 ?>
 
 	<body>
