@@ -40,12 +40,20 @@ function result(){
 	s++;
 	var res = document.form.textview.value;
 			$.ajax({
-            type: "POST",
-            url: "api.php",
+            type: "GET",
+            url: '/api.php',
+			cahe: false,
             dataType: "json",
-            data: "param="+JSON.stringify(res),
-			success: function(res) {
-				alert (res);
+            data: 'param='+JSON.stringify(res),
+			/*success: function(data) {
+				document.form.textview.value = data;
+			}*/
+			success:function(data){
+				console.log(data);
+			},
+			error:function(data){
+				console.log('error');
+				console.log(data);
 			}
 		})	 
 	//if(res) document.form.textview.value = eval(res);

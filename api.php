@@ -34,10 +34,10 @@ if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 }
 
 //Попытка работы с функцией rezult из script.js
-if(isset($_POST['param'])) {
+if(isset($_GET['param'])) {
  $param = json_decode($_POST['param']);
  $row = eval ($param);
- $json = json_encode($row);
+ echo json_encode($row);
 }
 
 switch ($api->module){
@@ -51,42 +51,30 @@ switch ($api->module){
 			$_SESSION['login'] = $data['login'];
 			header('Location: calc.php');
 		} else {
-			echo 'Пароль неверно введен!';
-			echo "<a href=\"index.php\">Повторите попытку</a>"; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
+			$api->answer['Пароль неверно введен!'] = true;
+			$api->answer["<a href=\"index.php\">Повторите попытку</a>"] = true; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
 		}
 	break;
 	//-----Кейс для регистрации-----
     case 'reg':
         $data = $api->params(['login_reg', 'password_reg', 'password_reg_2']);
-			//-----Создаем массив для сбора ошибок-----
-			$errors = array();
-			//-----Проводим проверки-----
-			if(trim($data['login_reg']) == ''){
-				$errors[] = "Введите логин!";
-			}
-			if($data['password_reg'] == ''){
-				$errors[] = "Введите пароль";
-			}
-			if($data['password_reg_2'] == ''){
-				$errors[] = "Введите повторный пароль";
-			}			
+			$errors = 0;
 			if($data['password_reg_2'] != $data['password_reg']){
-				$errors[] = "Повторный пароль введен не верно!";
+				$api->answer['Повторный пароль введен не верно!'] = true;
+				$errors = $errors + 1;
 			}
 			//-----Проверка на уникальность логина-----
 			$row_reg = $db->row("SELECT * FROM users WHERE login = ?s", [$data['login_reg']]);
 			if($row_reg){ 
-				$errors[] = "Пользователь с таким логином существует!";
+				$api->answer['Пользователь с таким логином существует!'] = true;
+				$errors = $errors + 1;
 			}
 			//-----Если ошбок нет, то заполняем БД и редиректим в калькулятор-----
-			if(empty($errors)) {
+			if($errors == 0) {
 				$db->query("INSERT INTO users (login, password) VALUES (?s, ?s)", [$data['login_reg'], $data['password_reg']]);
 				$_SESSION['auth'] = true;
 				$_SESSION['login'] = $data['login_reg'];
 				header('Location: calc.php');	
-			//-----Если есть ошибки, выводим их-----	
-			} else {
-				echo array_shift($errors);
 			}
         break;
 	//-----Кейс для выхода-----		
