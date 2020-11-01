@@ -1,5 +1,4 @@
 .calculator{
-	
 	position: absolute;
 	width: 351px;
 	height: 435px;
@@ -56,6 +55,7 @@
 	text-align: right;
 	border-radius: 15px;
 	color: #000000;
+	
 }
 
 .logout{
@@ -63,8 +63,8 @@
 	width: 351px;
 	height: 50px;
 	left: 40%;
-	top: 21%;
-	text-align: center
+	top: 20px;
+	text-align: center;
 }
 
 .auth{
@@ -73,5 +73,5 @@
 	height: 50px;
 	left: 40%;
 	top: 21%;
-	text-align: center
+	text-align: center;
 }

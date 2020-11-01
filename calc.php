@@ -17,9 +17,11 @@ if((isset($_SESSION['auth']) && ($_SESSION['auth'] == false)) || (!isset($_SESSI
     </head>
 	
 	<body> 
+	
 		<div class="logout">
+		
 			<p>Вы вошли под ником: <?php echo $_SESSION['login']?> 😎</p>
-
+			
 			<form action="api.php" method="get">
 				<button class="button" name="module" value="logout" type="submit">Выйти</button>
 			</form>
