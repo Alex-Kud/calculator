@@ -3,7 +3,7 @@
     <head> 
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Авторизация</title>
+		<title>Регистрация</title>
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha2/css/bootstrap.min.css" integrity="sha384-DhY6onE6f3zzKbjUPRc2hOzGAdEf4/Dz+WJwBvEYL/lkkIsI3ihufq9hk9K4lVoK" crossorigin="anonymous">
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="icon" href="favicon.ico" type="image/x-icon">
@@ -22,18 +22,18 @@ if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 				<div class="col">
 					<center>
 						<h1>Добро пожаловать на наш сайт!</h1>
-						<h3>Для того, чтобы воспользоваться калькулятором PSU, авторизируйтесь!</h3>
-						<h3>Если Вы здесь впервые, <a href="reg.html">пройдите регистрацию😉</a></h3>
+						<h3>Для того, чтобы воспользоваться калькулятором PSU, зарегистрируйтесь!</h3>
+						<h3>Если Вы уже зарегистрированы в системе, <a href="index.php">пройдите авторизацию😉</a></h3>
 					</center>
 				</div>
 			</div>
 		</div>
 
 		<form class="auth" action="api.php" method="get">
-		   <p><input type="text" name="login" placeholder="Логин"></p>
-		   <p><input type="password" name="password" placeholder="Пароль"></p>
-		   <button class="button" name="module" value="auth" type="submit">🔑Авторизоваться🔑</button>
+		   <p><input type="text" name="login_reg" placeholder="Логин"></p>
+		   <p><input type="password" name="password_reg" placeholder="Пароль"></p>
+		   <p><input type="password" name="password_reg_2" placeholder="Повторите пароль"></p>   
+		   <button class="button" name="module" value="reg" type="submit">🔑Регистрация🔑</button>
 		</form>
 	</body>
 </html>
-

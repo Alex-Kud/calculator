@@ -40,11 +40,59 @@ function sendJSON() {
 	let xhr = new XMLHttpRequest(); 
 	var send_string = document.form.textview.value;
 	send_string = send_string.replace(/([+])/g, '$1 !');
+	//Нужно из send_string выделить первое число, знак операции !-*/, второе число
+	var var1 = "";
+	var operator = "";
+	var var2 = "";
+	var arr = [];
+	arr = send_string.split('');
+	var flag = 0;
+	console.log ('Строка: ', send_string);
+
+	console.log ('Длина строки: ', send_string.length);
+
+	for (let i = 0; i < send_string.length; i++){
+		console.log ('Итерация: ', i);
+		console.log ('Элемент массива при данной итерации: ', arr[i]);
+		console.log ('Число ли там? - ', !isNaN(arr[i]));
+		if((!isNaN(arr[i]) || (arr[i] == '.')) && (flag == 0)){
+			console.log ('Залетели в первый if');
+			arr[i] = arr[i].toString();
+			var1 += arr[i];
+		}
+		else if ((arr[i] == '+') && (arr[i+1] == ' ') && (arr[i+2] == '!') && (flag == 0)){
+			console.log ('Залетели в плюсовый if');
+			flag = 1;
+			operator = '!';
+			i += 2;
+			if (arr[i+1] == '-'){
+				console.log ('Залетели в i+3 if');
+				operator = '-';
+				i++;
+			}
+		}
+		else if (((arr[i] == '-')||(arr[i] == '*')||(arr[i] == '/')) && (flag == 0)){
+			console.log ('Залетели во второй if');
+			flag = 1;
+			operator = arr[i];
+		}
+		else if ((!isNaN(arr[i]) || (arr[i] == '.')) && (flag == 1)){
+			console.log ('Залетели в третий if');
+			arr[i] = arr[i].toString();
+			var2 += arr[i];
+		} else {
+			console.log ('Залетели в else. Будет breake');
+			break;
+		}	
+	}
+	console.log ('var1: ', var1);
+	console.log ('operator: ', operator);
+	console.log ('var2: ', var2);
 	// -----адрес, куда мы отправим нашу JSON-строку-----
-	  let url = "https://l8.scripthub.ru/api.php?module=count&rezult=" + send_string; 
+	let url = "https://l8.scripthub.ru/api.php?module=count&var1=" + var1 + "&operator=" + operator + "&var2=" + var2;
 	// -----открываем соединение-----
-	console.log (document.form.textview.value);
-	console.log (send_string);
+	//console.log (document.form.textview.value);
+	//console.log (send_string);
 	xhr.open("GET", url, true); 
 	xhr.setRequestHeader("Content-Type", "application/json"); 
 	//-----обработка обращения к серверу-----

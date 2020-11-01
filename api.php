@@ -45,7 +45,6 @@ switch ($api->module){
 	//-----Кейс для авторизации-----
     case 'auth':
         $data = $api->params(['login', 'password']);
-		//console_log($nedata);
 		//-----Если логин и пароль верны, пускаем в калькулятор-----
 		$row = $db->row("SELECT * FROM users WHERE login = ?s AND password =?s", [$data['login'], $data['password']]);
 		if ($row){
@@ -53,8 +52,8 @@ switch ($api->module){
 			$_SESSION['login'] = $data['login'];
 			header('Location: calc.php');
 		} else {
-			$api->answer['Пароль неверно введен!'] = true;
-			$api->answer["<a href=\"index.php\">Повторите попытку</a>"] = true; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
+			$api->answer['result'] = 'Пароль неверно введен!';
+			//$api->answer['result'] = "<a href=\"index.php\">Повторите попытку</a>"; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
 		}
 	break;
 	
@@ -63,13 +62,13 @@ switch ($api->module){
         $data = $api->params(['login_reg', 'password_reg', 'password_reg_2']);
 			$errors = 0;
 			if($data['password_reg_2'] != $data['password_reg']){
-				$api->answer['Повторный пароль введен не верно!'] = true;
+				$api->answer['result'] = 'Повторный пароль введен не верно!';
 				$errors = $errors + 1;
 			}
 			//-----Проверка на уникальность логина-----
 			$row_reg = $db->row("SELECT * FROM users WHERE login = ?s", [$data['login_reg']]);
 			if($row_reg){ 
-				$api->answer['Пользователь с таким логином существует!'] = true;
+				$api->answer['result'] = 'Пользователь с таким логином существует!';
 				$errors = $errors + 1;
 			}
 			//-----Если ошбок нет, то заполняем БД и редиректим в калькулятор-----
@@ -80,7 +79,6 @@ switch ($api->module){
 				header('Location: calc.php');	
 			}
     break;
-	
 	//-----Кейс для выхода-----		
     case 'logout':
 		session_destroy();
@@ -89,11 +87,16 @@ switch ($api->module){
 	
 	//-----Кейс для счёта-----
     case 'count':
-		$data = $api->params(['rezult']);
-		$dt = $data['rezult']; 
-		$dt = str_replace ("!", "+", $dt);
-		eval("\$dt = $dt ;");
-		$api->answer[json_encode($dt)] = true;
+		$data = $api->params(['var1','operator','var2']);
+		if (($data['operator'] != '/') && ($data['var2'] != 0)){
+			$dt = $data['var1'].$data['operator'].$data['var2']; 
+			$dt = str_replace ("!", "+", $dt);
+			eval("\$dt = $dt ;");
+			$api->answer[json_encode($dt)] = true;
+		}
+		else {
+			$api->answer[json_encode("Division by 0!")] = true;
+		}
 		//echo json_encode($dt);
 	break;	
 }

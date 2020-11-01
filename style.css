@@ -1,0 +1,77 @@
+.calculator{
+	
+	position: absolute;
+	width: 351px;
+	height: 435px;
+	left: 40%;
+	top: 137px;
+	background: -moz-linear-gradient(#00BBD6, #EBFFFF);
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#00BBD6), to(#EBFFFF));
+	font-family: Tahoma;
+	border-radius: 15px;
+}
+
+.calculator .cont-buttons{
+	padding: 50px;
+	width: 100%;
+}
+
+.button{
+    background: -moz-linear-gradient(#00BBD6, #EBFFFF);
+    background: -webkit-gradient(linear, 0 0, 0 100%, from(#00BBD6), to(#EBFFFF));
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#00BBD6', endColorstr='#EBFFFF');
+    padding: 3px 7px;
+    color: #333;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 15px;
+    border: 1px solid #666;
+	width: 100%;
+	height: 50px;
+   }
+   
+.button:hover {
+	background-color: #4CAF50;
+	color: white;
+	box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.button:active{
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+.textview{
+	position: absolute;
+	width: 320px;
+	height: 75px;
+	left: 15px;
+	top: 15px;
+
+	font-family: Roboto;
+	font-style: normal;
+	font-weight: normal;
+	font-size: 42px;
+	line-height: 49px;
+	text-align: right;
+	border-radius: 15px;
+	color: #000000;
+}
+
+.logout{
+	position: absolute;
+	width: 351px;
+	height: 50px;
+	left: 40%;
+	top: 21%;
+	text-align: center
+}
+
+.auth{
+	position: absolute;
+	width: 351px;
+	height: 50px;
+	left: 40%;
+	top: 21%;
+	text-align: center
+}
