@@ -63,8 +63,7 @@ if((isset($_SESSION['auth']) && ($_SESSION['auth'] == false)) || (!isset($_SESSI
 							<td><input class="button" type="button" value="±" onclick="znak()"></td>
 							<td><input class="button" type="button" value="0" onclick="input(0)"></td>
 							<td><input class="button" type="button" value="." onclick="input('.')"></td>
-							<td><input class="button" type="button" value="=" onclick="result()">
-							</td>
+							<td><input class="button" type="button" value="=" onclick="result()"></td>
 						</tr>
 					</tbody>
 				</table>

@@ -53,7 +53,6 @@ switch ($api->module){
 			header('Location: calc.php');
 		} else {
 			$api->answer['result'] = 'Пароль неверно введен!';
-			//$api->answer['result'] = "<a href=\"index.php\">Повторите попытку</a>"; //Выводит всё как текст без разметки и ссылки. Хотя при вставке в calc.php разметка и ссылка работают
 		}
 	break;
 	
@@ -88,16 +87,16 @@ switch ($api->module){
 	//-----Кейс для счёта-----
     case 'count':
 		$data = $api->params(['var1','operator','var2']);
-		if (($data['operator'] != '/') && ($data['var2'] != 0)){
-			$dt = $data['var1'].$data['operator'].$data['var2']; 
-			$dt = str_replace ("!", "+", $dt);
-			eval("\$dt = $dt ;");
-			$api->answer[json_encode($dt)] = true;
+		if (($data['operator'] == '+') || ($data['operator'] == '-') || ($data['operator'] == '*') || ($data['operator'] == '/')) {
+			if (($data['operator'] != '/') && ($data['var2'] != 0)){
+				$dt = $data['var1'].$data['operator'].$data['var2']; 
+				eval("\$dt = $dt ;");
+				$api->answer[$dt] = true;
+			}
+			else {
+				$api->answer["Division by 0!"] = true;
+			}
 		}
-		else {
-			$api->answer[json_encode("Division by 0!")] = true;
-		}
-		//echo json_encode($dt);
 	break;	
 }
 ?>

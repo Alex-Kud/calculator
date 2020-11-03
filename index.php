@@ -29,11 +29,12 @@ if(isset($_SESSION['auth']) && $_SESSION['auth'] == true){
 			</div>
 		</div>
 
-		<form class="auth" action="api.php" method="get">
+		<form class="auth" name="loginForm">
 		   <p><input type="text" name="login" placeholder="Логин"></p>
 		   <p><input type="password" name="password" placeholder="Пароль"></p>
-		   <button class="button" name="module" value="auth" type="submit">🔑Авторизоваться🔑</button>
+		   <input class="button" type="button" value="🔑Авторизоваться🔑" onclick="auth()">
 		</form>
+		<script src="scr.js"></script>
 	</body>
 </html>
 

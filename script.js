@@ -39,7 +39,7 @@ function input(chislo){
 function sendJSON() { 
 	let xhr = new XMLHttpRequest(); 
 	var send_string = document.form.textview.value;
-	send_string = send_string.replace(/([+])/g, '$1 !');
+	send_string = send_string.replace(/([+])/g, '$1 %2B');
 	//Нужно из send_string выделить первое число, знак операции !-*/, второе число
 	var var1 = "";
 	var operator = "";
@@ -48,7 +48,6 @@ function sendJSON() {
 	arr = send_string.split('');
 	var flag = 0;
 	console.log ('Строка: ', send_string);
-
 	console.log ('Длина строки: ', send_string.length);
 
 	for (let i = 0; i < send_string.length; i++){
@@ -60,13 +59,13 @@ function sendJSON() {
 			arr[i] = arr[i].toString();
 			var1 += arr[i];
 		}
-		else if ((arr[i] == '+') && (arr[i+1] == ' ') && (arr[i+2] == '!') && (flag == 0)){
+		else if ((arr[i] == '+') && (arr[i+1] == ' ') && (arr[i+2] == '%') && (arr[i+3] == '2') && (arr[i+4] == 'B') && (flag == 0)){
 			console.log ('Залетели в плюсовый if');
 			flag = 1;
-			operator = '!';
-			i += 2;
+			operator = '%2B';
+			i += 4;
 			if (arr[i+1] == '-'){
-				console.log ('Залетели в i+3 if');
+				console.log ('Залетели в i+5 if');
 				operator = '-';
 				i++;
 			}
